@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio_dev_password
+      POSTGRES_DB: portfolio
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      target: production
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgresql://portfolio:portfolio_dev_password@db:5432/portfolio?schema=public
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

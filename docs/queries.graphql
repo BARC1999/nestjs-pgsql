@@ -1,0 +1,41 @@
+# Paste into Apollo Sandbox at http://localhost:3000/graphql
+query ProfessionalProfile {
+  profile {
+    id
+    name
+    headline
+    description
+    location
+    links {
+      label
+      url
+    }
+    skills {
+      name
+      category
+    }
+    experience {
+      company
+      position
+      startDate
+      endDate
+      duration
+      summary
+      achievements
+    }
+    projects {
+      name
+      description
+      url
+      repositoryUrl
+      technologies
+    }
+  }
+}
+
+# Narrow query: only one profile SQL read, no child-relation queries.
+query OnlyName {
+  profile {
+    name
+  }
+}

@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// One public portfolio. Separate child tables allow individual ordering,
+// additional items, and efficient targeted GraphQL field resolution.
+model Profile {
+  id          String             @id
+  name        String
+  headline    String
+  description String             @db.Text
+  location    String?
+  links       ProfessionalLink[]
+  skills      Skill[]
+  experience  Experience[]
+  projects    Project[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model ProfessionalLink {
+  id        String  @id
+  profileId String
+  label     String
+  url       String
+  sortOrder Int     @default(0)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+}
+
+model Skill {
+  id        String  @id
+  profileId String
+  name      String
+  category  String?
+  sortOrder Int     @default(0)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, name])
+  @@index([profileId, sortOrder])
+}
+
+model Experience {
+  id           String   @id
+  profileId    String
+  company      String
+  position     String
+  startDate    DateTime
+  endDate      DateTime?
+  summary      String?  @db.Text
+  achievements String[]
+  sortOrder    Int      @default(0)
+  profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+}
+
+model Project {
+  id            String   @id
+  profileId     String
+  name          String
+  description   String?  @db.Text
+  url           String
+  repositoryUrl String?
+  technologies  String[]
+  sortOrder     Int      @default(0)
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+}

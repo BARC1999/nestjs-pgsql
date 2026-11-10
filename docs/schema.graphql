@@ -1,0 +1,51 @@
+# API CONTRACT REFERENCE. The authoritative SDL is generated from GraphQL DTOs
+# at runtime (code-first mode); this file is included for offline review.
+scalar DateTime
+
+type Query {
+  profile: Profile
+}
+
+type Profile {
+  id: ID!
+  name: String!
+  headline: String!
+  description: String!
+  location: String
+  links: [ProfessionalLink!]!
+  skills: [Skill!]!
+  experience: [Experience!]!
+  projects: [Project!]!
+}
+
+type ProfessionalLink {
+  id: ID!
+  label: String!
+  url: String!
+}
+
+type Skill {
+  id: ID!
+  name: String!
+  category: String
+}
+
+type Experience {
+  id: ID!
+  company: String!
+  position: String!
+  startDate: DateTime!
+  endDate: DateTime
+  summary: String
+  achievements: [String!]!
+  duration: String!
+}
+
+type Project {
+  id: ID!
+  name: String!
+  description: String
+  url: String!
+  repositoryUrl: String
+  technologies: [String!]!
+}
